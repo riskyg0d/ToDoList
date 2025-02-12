@@ -1,0 +1,10 @@
+package com.ToDoList.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ToDoList.model.UserModel;
+
+public interface TaskRepository extends JpaRepository<UserModel,Long> {
+	UserModel findbyEmail(String email);
+
+}

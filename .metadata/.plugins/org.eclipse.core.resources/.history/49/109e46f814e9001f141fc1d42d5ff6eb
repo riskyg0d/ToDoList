@@ -1,0 +1,5 @@
+package com.ToDoList.repository;
+
+public interface TaskRepository extends JpaRepositroy<TaskModel ,Long> {
+
+}

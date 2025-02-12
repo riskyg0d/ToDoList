@@ -1,0 +1,6 @@
+package com.ToDoList.repository;
+
+public interface TaskRepository extends JpaRepositroy<UserModel,Long> {
+	User findbyEmail(String email);
+
+}

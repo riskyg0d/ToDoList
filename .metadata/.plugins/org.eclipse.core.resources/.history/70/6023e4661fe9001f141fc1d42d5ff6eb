@@ -1,0 +1,18 @@
+package com.ToDoList.service;
+
+import org.springframework.stereotype.Service;
+
+import com.ToDoList.model.TaskModel;
+import com.ToDoList.repository.TaskRepository;
+
+@Service
+public class TaskService {
+	@Autowired
+	private TaskRepository taskrepository;
+	
+	public TaskModel createTask(TaskModel taskm)
+	{
+		return taskrepository.save(taskm);
+	}
+	
+}

@@ -1,0 +1,26 @@
+package com.ToDoList.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ToDoList.model.TaskModel;
+import com.ToDoList.repository.TaskRepository;
+import java.util.*;
+@Service
+public class TaskService {
+	@Autowired 
+	private TaskRepository taskrepository;
+	
+	public TaskModel createTask(TaskModel taskm)
+	{
+		return taskrepository.save(taskm);
+	}
+	public List<TaskModel> getAllTasks()
+	{
+		return taskrepository.findAll();
+	}
+	public TaskModel updateTask(Long taskid, TaskModel updatedTask)
+	{
+		if(taskrepository.existsById(taskid))
+	}
+}

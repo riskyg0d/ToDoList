@@ -1,0 +1,10 @@
+package com.ToDoList.service;
+
+import com.ToDoList.repository.UserRepository;
+
+@Service
+public class TaskService {
+	private UserRepository userrepository;
+	
+	
+}

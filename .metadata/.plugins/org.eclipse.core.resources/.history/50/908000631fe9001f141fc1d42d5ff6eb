@@ -1,0 +1,11 @@
+package com.ToDoList.service;
+
+import org.springframework.stereotype.Service;
+
+import com.ToDoList.model.UserModel;
+import com.ToDoList.repository.UserRepository;
+
+@Service
+public class TaskService {
+	
+}
