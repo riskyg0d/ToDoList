@@ -1,0 +1,66 @@
+package com.ToDoList.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.ToDoList.model.UserModel;
+import com.ToDoList.service.AuthService;
+import com.ToDoList.util.JwtUtil;
+import com.ToDoList.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    // ✅ User Signup
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@RequestBody UserModel user) {
+        // Check if user already exists
+        if (userService.getUserbyEmail(user.getEmail()) != null) {
+            return ResponseEntity.badRequest().body("User already exists!");
+        }
+
+        // Encode password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Save the user
+        UserModel savedUser = userService.registerUser(user);
+        return ResponseEntity.ok(savedUser);
+    }
+
+    // ✅ User Login
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody UserModel user) {
+        UserModel existingUser = userService.getUserbyEmail(user.getEmail());
+
+        if (existingUser == null || !passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
+
+        // Generate JWT token
+        String token = jwtUtil.generateToken(existingUser.getEmail());
+
+        // Send response with token
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", existingUser);
+        return ResponseEntity.ok(response);
+    }
+}

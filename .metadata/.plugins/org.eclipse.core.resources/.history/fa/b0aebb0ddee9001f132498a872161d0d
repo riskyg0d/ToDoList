@@ -1,0 +1,58 @@
+package com.ToDoList.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable()) // Disable CSRF (for stateless JWT authentication)
+            .authorizeHttpRequests(auth -> auth
+                // Public access to authentication and H2 console routes
+                .requestMatchers("/auth/signup", "/auth/login", "/h2-console/**").permitAll() 
+                
+                // Allow H2 console access in dev mode (if needed)
+                .requestMatchers("/h2-console/**").permitAll() 
+
+                // Secure task and user routes (must be authenticated)
+                .requestMatchers("/tasks/**", "/user/update/**").authenticated() 
+
+                // Allow any other requests with admin or specific roles if required
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                // Fallback for all other routes (authenticated users only)
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter before authentication
+
+        return http.build();
+    }
+}

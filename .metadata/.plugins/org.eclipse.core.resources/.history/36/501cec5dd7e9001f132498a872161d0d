@@ -1,0 +1,39 @@
+package com.ToDoList.model;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name="users")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+public class UserModel {
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
+
+    @Column(nullable=false, unique=true)
+    private String email;
+
+    @Column(nullable=false)
+    private String password;
+
+    @CreationTimestamp
+    @Column(nullable=false, updatable=false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable=false)
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskModel> tasks; // ✅ Fixed incorrect type
+}

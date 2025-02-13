@@ -1,0 +1,7 @@
+spring.application.name=ToDoList
+# Enable H2 Console
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# Set allowed IPs (if needed)
+spring.h2.console.settings.web-allow-others=true  # Allow external access if needed

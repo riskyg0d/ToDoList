@@ -23,6 +23,70 @@ public class TaskModel {
 	private long taskid;
 	@Column(nullable=false)
 	private String taskname;
+	public long getTaskid() {
+		return taskid;
+	}
+
+	public void setTaskid(long taskid) {
+		this.taskid = taskid;
+	}
+
+	public String getTaskname() {
+		return taskname;
+	}
+
+	public void setTaskname(String taskname) {
+		this.taskname = taskname;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public LocalDate getDuedate() {
+		return duedate;
+	}
+
+	public void setDuedate(LocalDate duedate) {
+		this.duedate = duedate;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public UserModel getUser() {
+		return user;
+	}
+
+	public void setUser(UserModel user) {
+		this.user = user;
+	}
+
 	@Column(nullable=false)
 	private String status;
 	

@@ -1,0 +1,2 @@
+spring.application.name=ToDoList
+openssl rand -base64 32

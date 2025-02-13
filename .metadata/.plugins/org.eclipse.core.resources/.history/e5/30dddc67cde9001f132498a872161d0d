@@ -1,0 +1,32 @@
+package com.ToDoList.service;
+
+import com.ToDoList.model.UserModel;
+import com.ToDoList.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import java.util.Optional;
+
+@Service
+public class AuthService {
+
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public AuthService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
+    public UserModel registerUser(UserModel user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt password
+        return userRepository.save(user);
+    }
+
+    public Optional<UserModel> authenticateUser(String email, String password) {
+        Optional<UserModel> user = userRepository.findByEmail(email);
+        if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
+            return user;
+        }
+        return Optional.empty();
+    }
+}

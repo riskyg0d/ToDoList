@@ -1,0 +1,69 @@
+package com.ToDoList.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.ToDoList.model.LoginRequest;
+import com.ToDoList.model.UserModel;
+import com.ToDoList.service.AuthService;
+import com.ToDoList.util.JwtUtil;
+import com.ToDoList.service.UserService;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody UserModel userModel) {
+        // Check if email already exists
+        if (userService.getUserbyEmail(userModel.getEmail()) != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already in use");
+        }
+
+        // Encode password
+        userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
+
+        // Save the user to the database
+        userService.save(userModel);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            // Attempt to authenticate the user using email
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+            );
+
+            // If authentication is successful, generate the JWT token
+            String token = jwtUtil.generateToken(loginRequest.getEmail());
+            return ResponseEntity.ok(token);
+
+        } catch (BadCredentialsException e) {
+            // If authentication fails, return 403 Forbidden
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid credentials");
+        }
+    }
+}
+d

@@ -18,6 +18,5 @@ private UserRepository userrepository;
 	public UserModel getUserbyEmail(String email)
 	{
 		return userrepository.findByEmail(email);
-		
 	}
 }
