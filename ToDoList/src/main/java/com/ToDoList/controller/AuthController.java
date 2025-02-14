@@ -34,15 +34,10 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody UserModel userModel) {
-        // Check if email already exists
         if (userService.getUserbyEmail(userModel.getEmail()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already in use");
         }
-
-        // Encode password
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
-
-        // Save the user to the database
         userService.registerUser(userModel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
@@ -51,17 +46,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         try {
-            // Attempt to authenticate the user using email
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
             );
-
-            // If authentication is successful, generate the JWT token
             String token = jwtUtil.generateToken(loginRequest.getEmail());
             return ResponseEntity.ok(token);
 
         } catch (BadCredentialsException e) {
-            // If authentication fails, return 403 Forbidden
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid credentials");
         }
     }

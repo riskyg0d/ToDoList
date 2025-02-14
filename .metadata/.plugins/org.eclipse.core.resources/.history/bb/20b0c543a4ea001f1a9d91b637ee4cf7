@@ -1,0 +1,49 @@
+package com.ToDoList.controller;
+
+import java.util.List;
+import java.util.Optional;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ToDoList.model.TaskModel;
+import com.ToDoList.service.TaskService;
+
+@RestController
+@RequestMapping("/tasks")
+public class TaskController {
+	private TaskService taskService;
+
+	public TaskController(TaskService taskService)
+	{
+		this.taskService=taskService;
+	}
+	@GetMapping
+	public ResponseEntity<List<TaskModel>> getAllTasks()
+	{
+		return ResponseEntity.ok(taskService.getAllTasks());
+	}
+	@GetMapping("{/id}")
+	public ResponseEntity<Optional<TaskModel>> getTaskbyID(Long id)
+	{
+		Optional<TaskModel> task= taskService.getTaskById(id);
+		return ResponseEntity.ok(task);
+	}
+	
+	@PostMapping
+	public ResponseEntity<TaskModel> createTask(@RequestBody TaskModel task)
+	{
+		return ResponseEntity.ok(taskService.createTask(task));
+	}
+	
+	@PutMapping
+	public ResponseEntity<TaskModel> updateTask(@PathVariable Long id, @RequestBody TaskModel task)
+	{
+		return ResponseEntity.ok(taskService.updateTask(id, task));
+	}
+}

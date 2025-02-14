@@ -1,18 +1,23 @@
 package com.ToDoList.util;
 
-import java.util.Date;
-import javax.crypto.SecretKey;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "YOUR_SECRET_KEY_HERE"; // Replace with a strong 32+ character key
+    @Value("${jwt.secret}") // Load from application.properties or environment variables
+    private String secretKey;
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes()); // 🔹 Ensure at least 32 characters
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // ✅ Generate JWT Token
@@ -21,7 +26,7 @@ public class JwtUtil {
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
-                .signWith(getSigningKey(), Jwts.SIG.HS256) // 🔹 Corrected method
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -45,8 +50,8 @@ public class JwtUtil {
 
     // ✅ Corrected JWT Parsing
     private Claims parseClaims(String token) {
-        JwtParser parser = Jwts.parser()  // 🔹 No need for parserBuilder()
-                .verifyWith(getSigningKey()) // 🔹 Updated method
+        JwtParser parser = Jwts.parser()
+                .verifyWith(getSigningKey())  // Latest method in JJWT 2.x
                 .build();
         return parser.parseSignedClaims(token).getPayload();
     }
