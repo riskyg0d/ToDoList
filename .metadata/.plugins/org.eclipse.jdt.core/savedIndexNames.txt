@@ -29,7 +29,6 @@ INDEX VERSION 1.134+C:\Users\Omkar\OneDrive\Desktop\ToDoList\.metadata\.plugins\
 1290729630.index
 2953017487.index
 3956339618.index
-2498250528.index
 3304030887.index
 1862064614.index
 1351001267.index

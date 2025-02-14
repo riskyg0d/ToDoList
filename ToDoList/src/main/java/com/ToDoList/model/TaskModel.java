@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.ToDoList.model.UserModel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -102,6 +103,7 @@ public class TaskModel {
 	
 	@ManyToOne
 	@JoinColumn(name="user_id", nullable=false)
+	@JsonIgnore
 	private UserModel user;
 
 	public void setTaskid(Long taskid2) {

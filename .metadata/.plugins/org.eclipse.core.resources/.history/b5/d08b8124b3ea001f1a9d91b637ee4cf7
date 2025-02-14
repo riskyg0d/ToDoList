@@ -1,0 +1,60 @@
+package com.ToDoList.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ToDoList.dto.TaskDTO;
+import com.ToDoList.dto.UserDTO;
+import com.ToDoList.model.TaskModel;
+import com.ToDoList.model.UserModel;
+import com.ToDoList.repository.TaskRepository;
+import com.ToDoList.repository.UserRepository;
+import com.ToDoList.service.TaskService;
+
+@RestController
+@RequestMapping("/tasks")
+public class TaskController {
+
+    private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final TaskService taskService;
+
+    public TaskController(TaskRepository taskRepository, UserRepository userRepository, TaskService taskService) {
+        this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.taskService = taskService;
+    }
+
+    // GET all tasks (Now returns DTOs)
+    @GetMapping
+    public List<TaskDTO> getAllTasks() {
+        List<TaskModel> tasks = taskRepository.findAll();
+        return tasks.stream().map(taskService::convertToTaskDTO).collect(Collectors.toList());
+    }
+
+    // GET a task by ID (Now returns DTO)
+    @GetMapping("/{id}")
+    public TaskDTO getTaskById(@PathVariable Long id) {
+        Optional<TaskModel> task = taskRepository.findById(id);
+        return task.map(taskService::convertToTaskDTO).orElse(null);
+    }
+
+    // GET user by ID (Now returns DTO)
+    @GetMapping("/user/{id}")
+    public UserDTO getUserById(@PathVariable Long id) {
+        Optional<UserModel> user = userRepository.findById(id);
+        return user.map(taskService::convertToUserDTO).orElse(null);
+    }
+}

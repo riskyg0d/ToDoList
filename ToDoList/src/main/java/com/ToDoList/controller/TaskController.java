@@ -5,59 +5,45 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.ToDoList.model.TaskModel;
+import com.ToDoList.dto.TaskDTO;
 import com.ToDoList.service.TaskService;
 
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-	private TaskService taskService;
+    private final TaskService taskService;
 
-	public TaskController(TaskService taskService)
-	{
-		this.taskService=taskService;
-	}
-	@GetMapping
-	public ResponseEntity<List<TaskModel>> getAllTasks()
-	{
-		return ResponseEntity.ok(taskService.getAllTasks());
-	}
-	@GetMapping("/{id}")
-	public ResponseEntity<Optional<TaskModel>> getTaskbyID(Long id)
-	{
-		Optional<TaskModel> task= taskService.getTaskById(id);
-		return ResponseEntity.ok(task);
-	}
-	
-	@PostMapping
-	public ResponseEntity<TaskModel> createTask(@RequestBody TaskModel taskm, @RequestParam Long userId) {
-	    // Call the service to create the task, passing both the task and userId
-	    TaskModel createdTask = taskService.createTask(taskm, userId);
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
-	    // Return the created task with HTTP status 201 (Created)
-	    return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
-	}
+    @GetMapping
+    public ResponseEntity<List<TaskDTO>> getAllTasks() {
+        return ResponseEntity.ok(taskService.getAllTasks());
+    }
 
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<TaskModel> updateTask(@PathVariable Long id, @RequestBody TaskModel task)
-	{
-		return ResponseEntity.ok(taskService.updateTask(id, task));
-	}
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteTask(@PathVariable Long id)
-	{
-		taskService.deleteTask(id);
-		 return ResponseEntity.noContent().build();
-	}
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<TaskDTO>> getTaskById(@PathVariable Long id) {
+        Optional<TaskDTO> task = taskService.getTaskById(id);
+        return ResponseEntity.ok(task);
+    }
+
+    @PostMapping
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDTO, @RequestParam Long userId) {
+        TaskDTO createdTask = taskService.createTask(taskDTO, userId);
+        return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody TaskDTO taskDTO) {
+        return ResponseEntity.ok(taskService.updateTask(id, taskDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
 }

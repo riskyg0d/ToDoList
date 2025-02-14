@@ -1,0 +1,17 @@
+package com.ToDoList.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+public class TaskDTO {
+    @Setter @Getter private Long taskid;
+    @Setter @Getter private String taskname;
+    @Setter @Getter  private String status;
+    @Setter @Getter  private String description;
+    @Setter @Getter   private LocalDateTime duedate;
+    @Setter @Getter  private LocalDateTime createdAt;
+    @Setter @Getter  private LocalDateTime updatedAt;
+}
